@@ -14,6 +14,8 @@ pipe = sp.Popen(command, stdout = sp.PIPE, bufsize=10**8)
 
 print "begin"
 
+face_cascade = cv2.CascadeClassifier('./xml/lbpcascade_frontalface.xml')
+
 while True:
 	# read from pipe, convert, reshape
 	try:
@@ -26,7 +28,12 @@ while True:
 		continue;
 	# show the image
 	if image is not None:
-		cv2.imshow('video', image)
+		gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+		#gray = image
+		faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+		for (x,y,w,h) in faces:
+			cv2.rectangle(gray,(x,y),(x+w,y+h),(255,0,0),2)
+		cv2.imshow('video', gray)
 	else:
 		# frame not ready yet
 		print "frame not ready"
